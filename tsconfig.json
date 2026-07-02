@@ -1,0 +1,30 @@
+//{
+//  "compilerOptions": {
+//    "module": "nodenext",
+//    "moduleResolution": "nodenext",
+//    "jsx": "react-jsx",
+//    "target": "ES2020",
+//    "strict": true,
+//    "esModuleInterop": true,
+//    "skipLibCheck": true,
+//    "declaration": true
+//  },
+//  "include": ["src/**/*"]
+//}
+
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "target": "ES2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "./src",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}
