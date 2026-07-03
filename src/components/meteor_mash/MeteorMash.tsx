@@ -153,7 +153,6 @@ function MeteorMash({numOfMeteors=NUM_OF_METEORS, trailLength=TRAIL_LENGTH, trai
                         for (const dot of trail.dots) {
                             
                             // create random debries
-                            // angle = theta*(Math.PI/180)
                             angle = (((dot.index/10)*(175-130))+130) * (Math.PI / 180);                            
                             
                             dot.x-= Math.cos(angle) * dot.speed;
@@ -197,11 +196,27 @@ function MeteorMash({numOfMeteors=NUM_OF_METEORS, trailLength=TRAIL_LENGTH, trai
                 // meteor trail
                 ctx.beginPath();                
                 const gradient = ctx.createLinearGradient(trail.x1, trail.y1, trail.x1+trail.trailLength+trail.trailLengthShrinkable, trail.y1+trail.trailLength+trail.trailLengthShrinkable);
-                gradient.addColorStop(0, theme==="light"?"white":"black");
-                gradient.addColorStop(0.2, "rgba(255,255,0,1)");
-                gradient.addColorStop(0.5, "rgba(255,165,0,1)");
-                gradient.addColorStop(0.8, "rgba(255,69,0,0.8)");
-                gradient.addColorStop(1, "oklch(74.6% 0.16 232.661)");
+                
+                if (theme==="light" && trailColor && trailColor.light) {
+                    gradient.addColorStop(0, `rgba(${trailColor.light},0)`);
+                    gradient.addColorStop(0.4, `rgba(${trailColor.light},0.${luminosity})`);
+                    gradient.addColorStop(0.6, `rgba(${trailColor.light},0.${luminosity+1})`);
+                    gradient.addColorStop(0.8, `rgba(${trailColor.light},0.${luminosity+2})`);
+                    gradient.addColorStop(1, `rgba(${trailColor.light},1)`);
+                } else if (theme==="dark" && trailColor && trailColor.dark) {
+                    gradient.addColorStop(0, `rgba(${trailColor.dark},0)`);
+                    gradient.addColorStop(0.4, `rgba(${trailColor.dark},0.${luminosity})`);
+                    gradient.addColorStop(0.6, `rgba(${trailColor.dark},0.${luminosity+1})`);
+                    gradient.addColorStop(0.8, `rgba(${trailColor.dark},0.${luminosity+2})`);
+                    gradient.addColorStop(1, `rgba(${trailColor.dark},1)`);
+                    
+                } else{
+                    gradient.addColorStop(0, "rgba(255,255,255,0)");
+                    gradient.addColorStop(0.2, "rgba(255,255,0,1)");
+                    gradient.addColorStop(0.5, "rgba(255,165,0,1)");
+                    gradient.addColorStop(0.8, "rgba(255,69,0,0.8)");
+                    gradient.addColorStop(1, "oklch(74.6% 0.16 232.661)");
+                }
                 
                 ctx.moveTo(trail.x1, trail.y1);
                 ctx.lineTo(trail.x1+trail.trailLength+trail.trailLengthShrinkable, trail.y1+trail.trailLength+trail.trailLengthShrinkable);
@@ -209,11 +224,15 @@ function MeteorMash({numOfMeteors=NUM_OF_METEORS, trailLength=TRAIL_LENGTH, trai
                 ctx.strokeStyle = gradient;
                 ctx.stroke();
 
-                //ctx.tex
-
                 // meteor core outer
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(0, 191, 255, ${1+0.01+Math.sin(2 * Math.PI * 1 * ((trail.y1/100)))})`;
+                if (theme === "light" && meteorCoreColor && meteorCoreColor.light) {                    
+                    ctx.fillStyle = `rgba(${meteorCoreColor.light}, ${1+0.01+Math.sin(2 * Math.PI * 1 * ((trail.y1/100)))})`;
+                }else if (theme === "dark" && meteorCoreColor && meteorCoreColor.dark) {                    
+                    ctx.fillStyle = `rgba(${meteorCoreColor.dark}, ${1+0.01+Math.sin(2 * Math.PI * 1 * ((trail.y1/100)))})`;
+                }else{
+                    ctx.fillStyle = `rgba(0, 191, 255, ${1+0.01+Math.sin(2 * Math.PI * 1 * ((trail.y1/100)))})`;
+                }
                 ctx.arc(trail.x1+trail.trailLength+trail.trailLengthShrinkable+1, trail.y1+trail.trailLength+trail.trailLengthShrinkable+1, meteorCoreSize, 0, 2*Math.PI, false);
                 ctx.fill();
                 
@@ -231,7 +250,7 @@ function MeteorMash({numOfMeteors=NUM_OF_METEORS, trailLength=TRAIL_LENGTH, trai
         return() => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [trails, animateUntill]);
+    }, [trails, animateUntill, theme, numOfMeteors, trailLength, trailLengthShrinkable, trailThickness, trailColor, luminosity]);
     
 
     return(
