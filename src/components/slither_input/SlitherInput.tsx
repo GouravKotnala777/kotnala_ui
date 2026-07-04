@@ -216,7 +216,6 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
         const canvas = canvasRef.current;
         const display = displayRef.current;
         if (!canvas) return;
-        if (!display) return;
         if (!input) return;
 
         canvas.width = 600;
@@ -227,12 +226,7 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
         const animateParticles = () => {            
             if (!isAnimating) return;
 
-            
-            //const xReseted = -5;
-            //const yReseted = (((display.parentElement?.clientHeight||0))/2)+20;
-            const displayParentHeight = display?.parentElement?.clientHeight;
-
-            if (!displayParentHeight) return;
+            const displayParentHeight = display?.parentElement?.clientHeight as number;
 
             ctx.clearRect(0,0,canvas.width,canvas.height);
             for (const particle of particles) {
@@ -241,9 +235,9 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
                     particle.potential = 0;
                     continue;
                 }
-                
-                if (isTextRemaining) {
-                    if (isDisplayOverflowing) {
+                 
+                if (isTextRemaining) { // if content remaining
+                    if (isDisplayOverflowing) { // if content length is greater than input element's width
                         if (particle.delay > 0) {
                             particle.delay-=0.5;
                             continue;
@@ -252,10 +246,6 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
                         particle.y += particle.velY;
                         particle.scale +=0.07;
                         particle.opacity -= adjustWaveLength(waveLength);
-                        //particle.opacity -=0.03;
-                        //particle.opacity -=0.05;
-                        //particle.opacity -=0.07;
-                        //particle.opacity -=0.09;
                     }
                     else{
                         if (particle.delay > 0) {
@@ -274,13 +264,14 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
                             particle.delay-=6;
                             continue;
                         }
-                        particle.x += particle.velX+2.5;
+                        particle.x += particle.velX;
                         particle.y += particle.velY;
                         particle.scale +=0.07;
                         particle.opacity -= adjustWaveLength(waveLength);
                     }
                     else{
                         particle.potential = 0;
+                        continue;
                     }
                 }
 
@@ -312,6 +303,8 @@ function SlitherInput({theme="light", setText, placeHolder="", amplitude=4, smoo
                         {/* Text Part */}
                         <input ref={inputRef} type="text" value={text2} className="w-full h-12 absolute top-0 left-0 text-transparent caret-gray-400 outline-none"
                             onChange={(e) => {
+                                if (isAnimating) return;
+
                                 setText2(e.target.value);
                                 setText(e.target.value);
                                 onChangeInputHandler&&onChangeInputHandler(e);
