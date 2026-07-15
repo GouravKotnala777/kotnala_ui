@@ -14,3 +14,5 @@ export {default as ParticleVanishingInput} from "./components/particle_vanishing
 export {default as TextSlashInput} from "./components/text_slash_input/TextSlashInput";
 export {default as SlitherInput} from "./components/slither_input/SlitherInput";
 
+// Image Components
+export {default as ShatterImage} from "./components/shatter_image/ShatterImage";
